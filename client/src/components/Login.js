@@ -13,36 +13,70 @@ class Login extends Component {
             username : "",
             password : "",
             authFlag : false
-        }        
+        }   
+        
+        cookie.remove('cookie', { path: '/' });
+        //Bind the handlers to this class      
+        this.submitLogin = this.submitLogin.bind(this);
+    }
+
+    //Call the Will Mount to set the auth Flag to false
+    componentWillMount(){
+        this.setState({
+            authFlag : false
+        })
+    }
+
+    handleValidation () {
+        return true;
+    }
+
+    submitLogin = (e) => {
+        //prevent page from refresh
+        e.preventDefault();
+        if(this.handleValidation()) {
+            //axios.post data
+            this.setState({
+                authFlag : true
+            });
+        }
     }
 
     render(){
+        //redirect based on successful login
+        let redirectVar = null;
+        //if(cookie.load('cookie')){
+        if(this.state.authFlag) {
+            redirectVar = <Redirect to= "/list"/>
+        }
+        
         return (
             <div>
-                <div class="container"></div>
-                <div class="col-sm-4 col-sm-offset-4">
+                {redirectVar}
+                <div className="container"></div>
+                <div className="col-sm-4 col-sm-offset-4">
                     <h1 align="center"> Login</h1>
                     <br />
-                    <div class="login-form">
-                        <div class="form-group">
+                    <div className="login-form">
+                        <div className="form-group">
                             <label>Username</label>
                                 <input onChange = {this.usernameChangeHandler} 
                                     type="text" 
-                                    class="form-control" 
+                                    className="form-control" 
                                     name="username" >                        
                                 </input>
                         </div>
-                        <div class="form-group">
+                        <div className="form-group">
                             <label>Password</label>
                             <input onChange = {this.passwordChangeHandler} 
                                     type="password" 
-                                    class="form-control" 
+                                    className="form-control" 
                                     name="password" >                                        
                             </input>
                         </div>  
                         <button onClick={this.submitLogin} 
                                 type="submit" 
-                                class="btn btn-success"
+                                className="btn btn-success"
                                 style={{position: 'relative'}}>Submit
                         </button>
                     </div>                  
