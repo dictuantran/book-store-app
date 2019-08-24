@@ -1,29 +1,41 @@
 import React, {Component} from 'react';
 import '../App.css';
 import axios from 'axios';
-import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 
 class Login extends Component {
-    constructor(props){
-        //Call the constrictor of Super class i.e The Component
+    constructor(props) {
+        // Call the constrictor of Super class i.e The Component
         super(props);
-        //maintain the state required for this component
+        // maintain the state required for this component
         this.state = {
-            username : "",
+            email : "",
             password : "",
+            token: "",
             authFlag : false
         }   
-        
-        cookie.remove('cookie', { path: '/' });
-        //Bind the handlers to this class      
+                
+        // Bind the handlers to this class      
         this.submitLogin = this.submitLogin.bind(this);
     }
 
-    //Call the Will Mount to set the auth Flag to false
-    componentWillMount(){
+    // Call the Will Mount to set the auth Flag to false
+    componentWillMount() {
         this.setState({
-            authFlag : false
+            authFlag : false,
+            token: ""
+        })
+    }
+
+    emailChangeHandler = (e) => {
+        this.setState({
+            email: e.target.value
+        })
+    }
+
+    passwordChangeHandler = (e) => {
+        this.setState({
+            password: e.target.value
         })
     }
 
@@ -32,22 +44,44 @@ class Login extends Component {
     }
 
     submitLogin = (e) => {
-        //prevent page from refresh
+        // prevent page from refresh
         e.preventDefault();
+
         if(this.handleValidation()) {
-            //axios.post data
-            this.setState({
-                authFlag : true
-            });
+            const data = {
+                email: this.state.email,
+                password: this.state.password
+            }            
+
+            // set the with credentials to true
+            axios.defaults.withCredentials = true;
+
+            // make a post request with the user data
+            axios.post('http://localhost:3000/auth/login', data)
+                .then(response => {
+                    if(response.status === 200) {                        
+                        this.setState({
+                            authFlag: true,
+                            token: response.data["token"]
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.log("Login error: " + error)
+                    this.setState({
+                        authFlag: false,
+                        token: ""
+                    })
+                    alert("Authentication Unsuccessful");
+                })
         }
     }
 
     render(){
-        //redirect based on successful login
+        // redirect based on successful login
         let redirectVar = null;
-        //if(cookie.load('cookie')){
-        if(this.state.authFlag) {
-            redirectVar = <Redirect to= "/list"/>
+        if(this.state.token !== ""){        
+            redirectVar = <Redirect to= "/users"/>
         }
         
         return (
@@ -59,11 +93,11 @@ class Login extends Component {
                     <br />
                     <div className="login-form">
                         <div className="form-group">
-                            <label>Username</label>
-                                <input onChange = {this.usernameChangeHandler} 
+                            <label>Email</label>
+                                <input onChange = {this.emailChangeHandler} 
                                     type="text" 
                                     className="form-control" 
-                                    name="username" >                        
+                                    name="email" >                        
                                 </input>
                         </div>
                         <div className="form-group">

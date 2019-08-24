@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import cookie from 'react-cookies';
-import {Redirect} from 'react-router';
 
-class List extends Component {
+class Users extends Component {
     constructor () {
         super();
         this.state = { users: [] }                
@@ -11,33 +9,40 @@ class List extends Component {
 
     // get the users data from backend
     componentDidMount () {
-        axios.get('http://localhost:5001/list')
+        axios.get('http://localhost:3000/users')
             .then((response) => {
-                console.log(response.data)
+                console.log(response);
                 this.setState({
-                    users: this.state.users.concat(response.data)
+                    users: this.state.users.concat(response.data["data"])
                 })
             });
+    }
+
+    logout = () => {        
+        window.location = "/"
     }
 
     render(){
         let details = this.state.users.map((user) => {
             return (
                 <tr>
-                    <td>{user.name}</td>
-                    <td>{user.studentID}</td>
-                    <td>{user.department}</td>
+                    <td>{user.username}</td>
+                    <td>{user.first_name}</td>
+                    <td>{user.last_name}</td>
+                    <td>{user.email}</td>
                     <td>
                         <input type="submit" name="btnDelete" className="btn btn-danger" value="Delete" />
                     </td>
                 </tr>
             )
-        })
+        })        
 
-        return( <div>            
+        return (            
+            <div>                
                 <div className="container">
                     <h3 align="center">User Report</h3>
                     <ul className="nav nav-pills">
+                        
                         <h4><a style={{float: "right"}} href="#" onClick = {this.logout} >Logout</a></h4>
                     </ul>
                 </div>
@@ -45,13 +50,13 @@ class List extends Component {
                     <table className="table" style={{outline: "thin solid"}} border="1px solid black">
                         <thead>
                             <tr style={{outline: "thin solid"}}>
-                                <th bgcolor="yellow">Name</th>
-                                <th bgcolor="yellow">Student ID</th>
-                                <th bgcolor="yellow">Department</th>
+                                <th bgcolor="yellow">user name</th>
+                                <th bgcolor="yellow">first name</th>
+                                <th bgcolor="yellow">last name</th>
+                                <th bgcolor="yellow">email</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {/*Display the Table row based on data recieved*/}
+                        <tbody>                            
                             { details }
                         </tbody>
                     </table>   
@@ -61,4 +66,4 @@ class List extends Component {
     }
 }
 
-export default List;
+export default Users;

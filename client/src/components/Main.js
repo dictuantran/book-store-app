@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import Login from './Login';
-import List from './List';
+import Users from './Users';
 
 class Main extends Component {
     render() {
         return (
             <div>
                 <Route exact path="/" component={Login}/>
-                <Route path="/list" component={List}/>
+                <Route path="/users" component={Users}/>                
             </div>
         )
     }
